@@ -194,6 +194,94 @@ module fcr_ctrl
 	    // GET
 	    S_EXE_GET_VNUM:        begin exe_state <= S_EXE_DONE; rsp_data <= {56'd0,vnum};                             cmd_err <= 1'b0; end // Return version number
 	    	    
+
+/////////////////////////////////////////////////////////////////////////////////////
+//  Packets from the Camera
+////////////////////////////////////////////////////////////////////////////////////
+localparam
+  P_DET_RX_SDP_0 = 12'h969,
+  P_DET_RX_SDP_1 = 12'h8F3,
+  P_DET_RX_SDP_2 = 12'hA9A,
+  P_DET_RX_SDP_3 = 12'hC7D; 
+
+localparam
+  P_DET_RX_NOP = 12'h000,
+  P_DET_RX_ROW = 12'h001;
+
+/////////////////////////////////////////////////////////////////////////////////////
+//  Commands
+////////////////////////////////////////////////////////////////////////////////////
+localparam C_IDLE = 8'h00; // useful for parsing
+localparam C_NOP  = 8'h01; 
+localparam C_GET  = 8'h02;
+localparam C_SET  = 8'h03;
+
+/////////////////////////////////////////////////////////////////////////////////////
+//  Parameters
+////////////////////////////////////////////////////////////////////////////////////
+localparam C_VNUM           = 8'h01;  // version number,                  valid: GET
+localparam C_LP_CENTER_THR  = 8'h02;  // center threshold                 valid: SET
+localparam C_LP_SPLIT_THR   = 8'h03;  // split threshold                  valid: SET
+localparam C_PP_OC_LO_0     = 8'h04;  // Overclock low                    valid: SET
+localparam C_PP_OC_LO_1     = 8'h05;  // Overclock low                    valid: SET
+localparam C_PP_OC_LO_2     = 8'h06;  // Overclock low                    valid: SET
+localparam C_PP_OC_LO_3     = 8'h07;  // Overclock low                    valid: SET
+localparam C_PP_OC_LO_4     = 8'h08;  // Overclock low                    valid: SET
+localparam C_PP_OC_LO_5     = 8'h09;  // Overclock low                    valid: SET
+localparam C_PP_OC_LO_6     = 8'h0a;  // Overclock low                    valid: SET
+localparam C_PP_OC_LO_7     = 8'h0b;  // Overclock low                    valid: SET
+localparam C_PP_OC_HI_0     = 8'h0c;  // Overclock low                    valid: SET
+localparam C_PP_OC_HI_1     = 8'h0d;  // Overclock low                    valid: SET
+localparam C_PP_OC_HI_2     = 8'h0e;  // Overclock low                    valid: SET
+localparam C_PP_OC_HI_3     = 8'h0f;  // Overclock low                    valid: SET
+localparam C_PP_OC_HI_4     = 8'h10;  // Overclock low                    valid: SET
+localparam C_PP_OC_HI_5     = 8'h11;  // Overclock low                    valid: SET
+localparam C_PP_OC_HI_6     = 8'h12;  // Overclock low                    valid: SET
+localparam C_PP_OC_HI_7     = 8'h13;  // Overclock low                    valid: SET
+localparam C_SIM_EN         = 8'h14;  // Enable the sim pixel interface   valid: SET
+localparam C_SIM_WR         = 8'h15;  // Write to the camera interface    valid: SET
+localparam C_FORCE_OCC      = 8'h16;  // Force OCC to 0                   valid: SET
+localparam C_FORCE_YMAP     = 8'h17;  // Force YMAP to 0                  valid: SET
+localparam C_ERM_PX0        = 8'h18;  // ERP 0 Row 0                      valid: GET
+localparam C_ERM_PX1        = 8'h19;  // ERP 0 Row 1                      valid: GET
+localparam C_ERM_PX2        = 8'h1a;  // ERP 0 Row 2                      valid: GET
+localparam C_ERM_X_LOC      = 8'h1b;  // ERP 0 X Loc                      valid: GET
+localparam C_ERM_Y_LOC      = 8'h1c;  // ERP 0 Y Loc                      valid: GET
+localparam C_ERM_FN         = 8'h1d;  // ERP 0 FN                         valid: GET
+localparam C_ERM_GRADE      = 8'h1e;  // ERP 0 Grade                      valid: GET
+localparam C_ERM_ESUM       = 8'h1f;  // ERP 0 Esum                       valid: GET
+localparam C_ERM_RD         = 8'h20;  // ERP 0 RD                         valid: SET
+localparam C_ERM_QSIZE      = 8'h21;  // ERP 0 Qsize                      valid: GET
+localparam C_X_LOC_MAX      = 8'h22;  // X loc max                        valid: SET
+localparam C_Y_LOC_MAX      = 8'h23;  // Y loc max                        valid: SET
+localparam C_NSP            = 8'h24;  // # serial prescan                 valid: SET
+localparam C_NOC            = 8'h25;  // # overclock                      valid: SET
+localparam C_DBB_Y_LOC      = 8'h26;  // DBB Y loc                        valid: SET
+localparam C_DBB_DATA       = 8'h27;  // DBB data                         valid: GET
+localparam C_SRAM_0         = 8'h28;  // SRAM 0                           valid: GET
+localparam C_CMD_SO_RUN     = 8'h29;  // Streaming Out run                valid: SET
+localparam C_CMD_RUN_USB_TP = 8'h2a;  // USB test pattern                 valid: SET
+localparam C_ERM_CLEAR      = 8'h2b;  // ERM clear                        valid: SET
+localparam C_ERM_PR         = 8'h2c;  // ERM products                     valid: GET
+localparam C_ERM_NH         = 8'h2d;  // ERM neighborhood                 valid: GET
+localparam C_ERM_P00        = 8'h2e;
+localparam C_ERM_P10        = 8'h2f;
+localparam C_ERM_P20        = 8'h30;
+localparam C_ERM_P01        = 8'h31;
+localparam C_ERM_P11        = 8'h32;
+localparam C_ERM_P21        = 8'h33;
+localparam C_ERM_P02        = 8'h34;
+localparam C_ERM_P12        = 8'h35;
+localparam C_ERM_P22        = 8'h36; 
+localparam C_ES_RUN         = 8'h37;  // Event Storage stream over USB3   valid: SET
+localparam C_DRM_CNT        = 8'h38;  // Get data rate manager count
+
+/////////////////////////////////////////////////////////////////////////////////////
+//  Parameters
+////////////////////////////////////////////////////////////////////////////////////
+localparam P_CLK_FREQ_HZ = 100000000;
+localparam P_WD_TIMEOUT_NS = 2000000000;
+localparam P_WD_KICK_NS = 2000; 
 	    // SET	 
 	    // S_EXE_SET_ES_RUN:
 	    //   begin
