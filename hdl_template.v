@@ -37,3 +37,8 @@ module <MODULE NAME>
    // FSM Flow
       
 endmodule
+
+// For emacs verilog-mode
+// Local Variables:
+// verilog-library-directories:(".")
+// End:
